@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio - Fuego Aura | TEB Innovations</title>
+    <link rel="icon" href="assets/logo.jpg" type="image/logo">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons (Fallbacks) -->
+    <link rel="stylesheet" href="../fontawesome-free-6.7.2-web/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-color: #ffffff;
+            --accent-primary: #3b82f6; /* Blue */
+            --accent-secondary: #8b5cf6; /* Purple */
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --card-hover-bg: rgba(255, 255, 255, 0.07);
+            --card-hover-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- Background Effects --- */
+        .background-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .grid-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            transition: transform 0.2s ease-out;
+        }
+
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent-primary);
+            top: -50px;
+            left: -50px;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent-secondary);
+            bottom: -100px;
+            right: -100px;
+        }
+
+        /* --- Loader --- */
+        .initial-loader {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-color);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+        
+        .initial-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- Main Content --- */
+        .container {
+            width: 100%;
+            max-width: 680px;
+            padding: 4rem 1.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin-bottom: 1.5rem;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.1);
+        }
+
+        .logo-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Fallback icon if image fails */
+        .logo-fallback {
+            font-size: 2.5rem;
+            color: var(--text-color);
+            display: none;
+        }
+
+        .title {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #fff, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 400;
+        }
+
+        /* Links */
+        .links-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .link-card {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: all 0.2s ease;
+            position: relative;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .link-card:hover {
+            transform: translateY(-2px);
+            background: var(--card-hover-bg);
+            border-color: var(--card-hover-border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .link-icon-wrapper {
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .link-icon-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .icon-fallback {
+            font-size: 1.2rem;
+        }
+
+        .link-content {
+            flex-grow: 1;
+        }
+
+        .link-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.15rem;
+        }
+
+        .link-description {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .link-arrow {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.9rem;
+            transition: transform 0.2s ease;
+        }
+
+        .link-card:hover .link-arrow {
+            transform: translateX(4px);
+            color: #fff;
+        }
+
+        /* Specific Card Colors (Optional Accents) */
+        .instagram-card:hover .link-icon-wrapper {
+            background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: 4rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.8rem;
+        }
+
+        .footer-links {
+            margin-top: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container { padding-top: 3rem; }
+            .title { font-size: 1.75rem; }
+            .orb-1 { width: 200px; height: 200px; }
+            .orb-2 { width: 250px; height: 250px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Spinner -->
+    <div id="initial-loader" class="initial-loader">
+        <div class="spinner" aria-hidden="true"></div>
+    </div>
+
+    <!-- Background -->
+    <div class="background-wrapper">
+        <div class="grid-overlay"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-wrapper">
+                <!-- Using onerror to toggle fallback if image is missing -->
+                <img src="assets/logo.jpg" alt="TEB Innovations Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                
+            </div>
+            <h1 class="title">Fuego Aura</h1>
+            <p class="subtitle">ഇത് Light കത്തും🔥</p>
+        </header>
+
+        <!-- Links -->
+        <main class="links-container">
+            
+            <!-- Main Site -->
+            <a href="https://fuegoaura.com" class="link-card" target="_blank" rel="noopener noreferrer">
+                <div class="link-icon-wrapper">
+                    <img src="#" alt="Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <i class="fa-solid fa-globe icon-fallback" style="color: #60a5fa;"></i>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">Fuego Aura</div>
+                    <div class="link-description">Laser Cutting | Laser engraving | & More</div>
+                </div>
+                <div class="link-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+            </a>
+
+                        <!-- Instagram -->
+            <a href="https://www.instagram.com/fuego_aura_/" class="link-card instagram-card" target="_blank" rel="noopener noreferrer">
+                <div class="link-icon-wrapper">
+                    <!-- Standard Insta Icon from Wikimedia -->
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <!-- <i class="fa-brands fa-instagram icon-fallback"></i> -->
+                </div>
+                <div class="link-content">
+                    <div class="link-title">Instagram</div>
+                    <div class="link-description">Follow us for updates & works</div>
+                </div>
+                <div class="link-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+            </a>
+
+            <!-- Awards -->
+            <a href="tel:9497032885" class="link-card" target="_blank" rel="noopener noreferrer">
+                <div class="link-icon-wrapper">
+                    <img src="#" alt="Awards" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <i class="fa-solid fa-phone" style="color: #fbbf24;"></i>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">Call Us</div>
+                    <div class="link-description">We’re here to help</div>
+                </div>
+                <div class="link-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+            </a>
+
+            <!-- EduBot -->
+            <a href="https://wa.link/0vg1uq" class="link-card" target="_blank" rel="noopener noreferrer">
+                <div class="link-icon-wrapper">
+                    <img src="#" alt="EduBot" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <i class="fa-brands fa-whatsapp" style="color: #67de21;"></i>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">Chat with us</div>
+                    <div class="link-description">We’re online & ready</div>
+                </div>
+                <div class="link-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+            </a>
+
+
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; <span id="current-year"></span> <a href="https://tebinnovations.in" target="_blank">TEB Innovations</a>. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Loader Logic (Simple fade out)
+            const loader = document.getElementById('initial-loader');
+            
+            window.addEventListener('load', () => {
+                // Short delay to ensure assets are rendered
+                setTimeout(() => {
+                    if (loader) {
+                        loader.classList.add('hidden');
+                        // Remove from DOM after transition
+                        setTimeout(() => {
+                            loader.style.display = 'none';
+                        }, 500); 
+                    }
+                }, 500);
+            });
+
+            // 2. Subtle Parallax for Background Orbs (Performance Optimized)
+            const orbs = document.querySelectorAll('.orb');
+            let ticking = false;
+
+            document.addEventListener('mousemove', (e) => {
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        const x = (e.clientX / window.innerWidth - 0.5) * 20; // Reduced movement range
+                        const y = (e.clientY / window.innerHeight - 0.5) * 20;
+
+                        orbs.forEach((orb, index) => {
+                            const speed = (index + 1) * 1.5; // Slower speed
+                            orb.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+                        });
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+
+            // 3. Dynamic copyright year
+            const yearEl = document.getElementById('current-year');
+            if (yearEl) {
+                yearEl.textContent = new Date().getFullYear();
+            }
+        });
+    </script>
+</body>
+</html>
